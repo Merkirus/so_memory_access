@@ -1,36 +1,40 @@
 #include "Edf.h"
 #include <cmath>
+#include <algorithm>
 
-#define MAX_MIN 1000
+#define MAX 10000
 
 Edf::Edf() = default;
 Edf::~Edf() = default;
 
-int Edf::run(std::vector<Zlecenie>& v, int curr, int& result)
+int Edf::run(std::vector<Zlecenie>& v, int prev, int& cancelled)
 {
-	Zlecenie curr_zlecenie;
-	Zlecenie next_zlecenie;
-	for (Zlecenie element : v)
-	{
-		if (element.getCylinder() == curr) curr_zlecenie = element;
-		break;
-	}
-	int min = MAX_MIN;
+	int curr = 0;
+	int curr_deadline = 0;
+	int smallest = MAX;
 	for (Zlecenie element : v)
 	{
 		if (element.getRealTime())
 		{
-			if (element.getDeadline() < min)
+			int odleglosc = element.getCylinder() - prev;
+			if (abs(odleglosc) < smallest)
 			{
-				min = element.getDeadline();
-				next_zlecenie = element;
+				curr = element.getCylinder();
+				curr_deadline = element.getDeadline();
+				smallest = abs(odleglosc);
 			}
 		}
 	}
-	int odleglosc = next_zlecenie.getCylinder() - curr_zlecenie.getCylinder();
-	odleglosc = abs(odleglosc);
-	result += odleglosc > min ? min : odleglosc;
-	return next_zlecenie.getCylinder();
+	int droga = abs(curr-prev);
+	if (droga > curr_deadline)
+	{
+		droga  = curr_deadline;
+		++cancelled;
+		auto remove = remove_if(v.begin(), v.end(),
+	                    [&](Zlecenie& zlecenie) -> bool {return zlecenie.getCylinder()==curr;});
+	    v.erase(remove, v.end());
+	}
+	return prev < curr ? prev + droga : prev - droga;
 }
 
 bool Edf::hasRT(std::vector<Zlecenie>& v)
@@ -39,33 +43,5 @@ bool Edf::hasRT(std::vector<Zlecenie>& v)
 	{
 		if (element.getRealTime()) return true;
 	}
-	return false;
-}
-
-bool Edf::tooFar(std::vector<Zlecenie>& v, int curr)
-{
-	Zlecenie curr_zlecenie;
-	Zlecenie next_zlecenie;
-	for (Zlecenie element : v)
-	{
-		if (element.getCylinder() == curr) curr_zlecenie = element;
-		break;
-	}
-
-	int min = MAX_MIN;
-	for (Zlecenie element : v)
-	{
-		if (element.getRealTime())
-		{
-			if (element.getDeadline() < min)
-			{
-				min = element.getDeadline();
-				next_zlecenie = element;
-			}
-		}
-	}
-	int odleglosc = curr_zlecenie.getCylinder() - next_zlecenie.getCylinder();
-	odleglosc = abs(odleglosc);
-	if (odleglosc > min) return true;
 	return false;
 }

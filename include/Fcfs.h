@@ -8,12 +8,12 @@
 class Fcfs
 {
 public:
-	Fcfs(std::vector<Zlecenie> v, IAlgo* rt_algo);
-	~Fcfs()=default;
+	Fcfs(std::vector<Zlecenie> v, IAlgo& rt_algo);
+	~Fcfs();
 	void run();
 private:
 	std::vector<Zlecenie> v;
-	IAlgo& rt_algo;
+	IAlgo* rt_algo;
 };
 
 #endif

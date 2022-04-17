@@ -1,13 +1,13 @@
 #include "Zlecenie.h"
+#include "Random.h"
 #include <vector>
 
-#define randnum(min, max) \
-        ((rand() % (int)(((max) + 1) - (min))) + (min))
+#define MAX_CYLINDER 200
 
 Zlecenie::Zlecenie(unsigned cylinder)
 {
     this->cylinder = cylinder;
-    this->real_time = randnum(0,20) == 1 ? true : false;
+    this->real_time = randnum(0,5) == 1 ? true : false;
     this->deadline = real_time ? randnum(1,100) : 0;
 }
 
@@ -45,8 +45,24 @@ unsigned Zlecenie::getDeadline() const
     return deadline;
 }
 
-bool Zlecenie::operator==(const Zlecenie& p) {
+unsigned Zlecenie::getOczekiwanie() const
+{
+    return oczekiwanie;
+}
+
+bool Zlecenie::operator==(const Zlecenie& p)
+{
     return (this == &p);
+}
+
+Zlecenie Zlecenie::makeZlecenie()
+{
+    unsigned cylinder;
+    do
+    {
+        cylinder = rand()%MAX_CYLINDER;
+    } while (Zlecenie::isUsed(cylinder));
+    return Zlecenie{cylinder};
 }
 
 std::vector<unsigned> Zlecenie::used = std::vector<unsigned>();

@@ -11,9 +11,8 @@ class Edf : public IAlgo
 public:
 	Edf();
 	virtual ~Edf();
-	int run(std::vector<Zlecenie>& v, int curr, int& result) override;
+	int run(std::vector<Zlecenie>& v, int prev, int& cancelled) override;
 	bool hasRT(std::vector<Zlecenie>& v) override;
-	bool tooFar(std::vector<Zlecenie>& v, int curr) override;
 };
 
 #endif
