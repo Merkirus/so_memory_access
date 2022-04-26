@@ -9,7 +9,7 @@ class IAlgo
 {
 public:
 	virtual ~IAlgo()=default;
-	virtual int run(std::vector<Zlecenie>& v, int prev, int& cancelled) = 0;
+	virtual int run(std::vector<Zlecenie>& v, int prev, long& cancelled) = 0;
 	virtual bool hasRT(std::vector<Zlecenie>& v) = 0;
 };
 

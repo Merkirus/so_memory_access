@@ -7,11 +7,19 @@
 Edf::Edf() = default;
 Edf::~Edf() = default;
 
-int Edf::run(std::vector<Zlecenie>& v, int prev, int& cancelled)
+int Edf::run(std::vector<Zlecenie>& v, int prev, long& cancelled)
 {
 	int curr = 0;
 	int curr_deadline = 0;
 	int smallest = MAX;
+	int size_before = v.size();
+	auto remove = remove_if(v.begin(), v.end(),
+            [&](Zlecenie& zlecenie) -> bool {
+                return (zlecenie.getDeadline() < 0 && zlecenie.getRealTime());
+            });
+    v.erase(remove, v.end());
+    int size_after = v.size();
+    cancelled += size_before - size_after;
 	for (Zlecenie element : v)
 	{
 		if (element.getRealTime())
@@ -25,6 +33,7 @@ int Edf::run(std::vector<Zlecenie>& v, int prev, int& cancelled)
 			}
 		}
 	}
+	if (smallest == MAX) return prev;
 	int droga = abs(curr-prev);
 	if (droga > curr_deadline)
 	{

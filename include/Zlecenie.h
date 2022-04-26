@@ -15,17 +15,17 @@ public:
     void setCylinder(unsigned);
     bool getRealTime() const;
     void setRealTime(unsigned);
-    unsigned getDeadline() const;
-    void setDeadline(unsigned);
-    unsigned getOczekiwanie() const;
-    void setOczekiwanie(unsigned);
+    int getDeadline() const;
+    void setDeadline(int);
+    int getOczekiwanie() const;
+    void setOczekiwanie(int);
     bool operator==(const Zlecenie& p);
 private:
     static std::vector<unsigned> used;
     unsigned cylinder;
     bool real_time;
-    unsigned deadline;
-    unsigned oczekiwanie;
+    int deadline;
+    int oczekiwanie;
 };
 
 #endif

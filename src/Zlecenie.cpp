@@ -9,6 +9,7 @@ Zlecenie::Zlecenie(unsigned cylinder)
     this->cylinder = cylinder;
     this->real_time = randnum(0,5) == 1 ? true : false;
     this->deadline = real_time ? randnum(1,100) : 0;
+    this->oczekiwanie = 0;
 }
 
 Zlecenie::~Zlecenie()
@@ -40,14 +41,24 @@ bool Zlecenie::getRealTime() const
     return real_time;
 }
 
-unsigned Zlecenie::getDeadline() const
+int Zlecenie::getDeadline() const
 {
     return deadline;
 }
 
-unsigned Zlecenie::getOczekiwanie() const
+void Zlecenie::setDeadline(int deadline)
+{
+    this->deadline = deadline;
+}
+
+int Zlecenie::getOczekiwanie() const
 {
     return oczekiwanie;
+}
+
+void Zlecenie::setOczekiwanie(int oczekiwanie)
+{
+    this->oczekiwanie += oczekiwanie;
 }
 
 bool Zlecenie::operator==(const Zlecenie& p)

@@ -3,10 +3,13 @@
 #include "Fcfs.h"
 #include "Random.h"
 
-#define MAX 20
+#define MAX 200
 
 Fcfs::Fcfs(std::vector<Zlecenie> v, IAlgo& rt_algo)
 : v{v}, rt_algo{&rt_algo} {}
+
+Fcfs::Fcfs(std::vector<Zlecenie> v)
+: v{v}, rt_algo{nullptr} {}
 
 Fcfs::~Fcfs()
 {
@@ -17,7 +20,7 @@ void Fcfs::run()
 {
     int size, add_size;
     int curr, prev;
-    int result, canceled;
+    long result, canceled;
 
     size = v.size();
     add_size = 0;
@@ -52,6 +55,10 @@ void Fcfs::run()
                         {
                             droga = i;
                             result += droga;
+                            for_each(v.begin(), v.end()-1,
+                                [&](Zlecenie& zlecenie) {
+                                    zlecenie.setDeadline(zlecenie.getDeadline()-droga);
+                                });
                             curr = prev < curr ? curr - droga : curr + droga;
                             real_time_event = true;
                             break;
@@ -62,9 +69,12 @@ void Fcfs::run()
                 result += droga;
                 auto remove = remove_if(v.begin(), v.end(),
                         [&](Zlecenie& zlecenie) -> bool {
-                            return (zlecenie.getCylinder()==curr && zlecenie.getDeadline());
+                            return (zlecenie.getCylinder()==curr && zlecenie.getRealTime());
                         });
                 v.erase(remove, v.end());
+                std::cout << "RT" << '\n';
+                for_each(v.begin(), v.end(), [&](Zlecenie& zlecenie) {std::cout << zlecenie.getCylinder() << ',';});
+                std::cout << '\n';
             }
             else
             {
@@ -90,6 +100,9 @@ void Fcfs::run()
                 if (real_time_event) continue;
                 result += droga;
                 v.erase(v.begin());
+                std::cout << "Common" << '\n';
+                for_each(v.begin(), v.end(), [&](Zlecenie& zlecenie) {std::cout << zlecenie.getCylinder() << ',';});
+                std::cout << '\n';
             }
         }  
     }
