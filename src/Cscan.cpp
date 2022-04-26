@@ -42,6 +42,8 @@ void Cscan::run()
 			int droga = abs(curr-prev);
 			for (int i=1; i <= droga; ++i)
 			{
+				for_each(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
+					zlecenie.setOczekiwanie(1);});
 				if (randnum(0,20) == 1)
 				{
 					Zlecenie nowe = Zlecenie::makeZlecenie();
@@ -53,19 +55,22 @@ void Cscan::run()
 						droga = abs(curr-prev);
 					}
 				}
-				for_each(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
-					zlecenie.setOczekiwanie(1);});
+				
 			}
 			result += droga;
-			oczekiwanie += (pPrev-1)->getOczekiwanie();
 			v.erase(pPrev-1);
+			auto current_curr = find_if(v.begin(), v.end(), [&](Zlecenie& zlecenie)
+				{return zlecenie.getCylinder() == curr;});
+			oczekiwanie += current_curr->getOczekiwanie();
 		}
 		else
 		{
 			curr = v.front().getCylinder();
 			++reset;
-			oczekiwanie += (pPrev-1)->getOczekiwanie();
 			v.erase(pPrev-1);
+			auto current_curr = find_if(v.begin(), v.end(), [&](Zlecenie& zlecenie)
+				{return zlecenie.getCylinder() == curr;});
+			oczekiwanie += current_curr->getOczekiwanie();
 		}
 	}
 

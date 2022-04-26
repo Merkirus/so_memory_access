@@ -1,48 +1,82 @@
 #include "Fd_scan.h"
 #include <algorithm>
 #include <cmath>
+#include "Random.h"
 
 Fd_scan::Fd_scan() = default;
 Fd_scan::~Fd_scan() = default;
 
-int Fd_scan::run(std::vector<Zlecenie>& v, int prev, long& cancelled)
+int Fd_scan::run(std::vector<Zlecenie>& v, int prev, long& result, long& cancelled, long& oczekiwanie, int& add_size)
 {
 	int curr = 0;
-	int curr_deadline = 0;
-	int furthest = 0;
-	int size_before = v.size();
-	auto remove = remove_if(v.begin(), v.end(),
-            [&](Zlecenie& zlecenie) -> bool {
-            	if (zlecenie.getRealTime())
-            	{
-            		int odleglosc = zlecenie.getCylinder() - prev;
-            		return (zlecenie.getDeadline() < abs(odleglosc));
-            	}
-                return false;
-            });
-    v.erase(remove, v.end());
-    int size_after = v.size();
-    cancelled += size_before - size_after;
-	for (Zlecenie element : v)
+	int local_prev = prev;
+
+	while (hasRT(v))
 	{
-		if (element.getRealTime())
+		/* Usuwanie przedawnionych realtime */
+		int size_before = v.size();
+		auto remove = remove_if(v.begin(), v.end(),
+	            [&](Zlecenie& zlecenie) -> bool {
+	                return (zlecenie.getDeadline() <= 0 && zlecenie.getRealTime());
+	            });
+	    v.erase(remove, v.end());
+	    int size_after = v.size();
+	    cancelled += size_before - size_after;
+	    /* --- */
+
+		if (!hasRT(v)) continue;
+
+		int furthest = 0;
+
+		for (Zlecenie element : v)
 		{
-			int odleglosc = element.getCylinder() - prev;
-			if (abs(odleglosc) > furthest)
+			if (element.getRealTime())
 			{
-				furthest = abs(odleglosc);
-				curr = element.getCylinder();
+				int odleglosc = element.getCylinder() - local_prev;
+				if (abs(odleglosc) > furthest)
+				{
+					furthest = abs(odleglosc);
+					curr = element.getCylinder();
+				}
 			}
 		}
+
+		bool real_time_event = false;
+		int droga = abs(curr - local_prev);
+
+		for (int i=1; i <= droga; ++i)
+	    {
+	        for_each(v.begin(), v.end()-1, [&](Zlecenie& zlecenie) {
+	            zlecenie.setDeadline(1);});
+	        for_each(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
+	            zlecenie.setOczekiwanie(1);});
+	        if (randnum(0,20) == 1)
+	        {
+	            Zlecenie nowe = Zlecenie::makeZlecenie();
+	            v.push_back(nowe);
+	            ++add_size;
+	            if (nowe.getRealTime())
+	            {
+	                droga = i;
+	                result += droga;
+	                curr = prev < curr ? prev + droga : prev - droga;
+	                auto remove2 = remove_if(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
+						return (zlecenie.getCylinder() >= local_prev && zlecenie.getCylinder() <= curr);});
+	                local_prev = curr;
+	                v.erase(remove2, v.end());
+	                real_time_event = true;
+	                break;
+	            }
+	        }
+	    }
+	    if (real_time_event) continue;
+		result += droga;
+		auto remove3 = remove_if(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
+			return (zlecenie.getCylinder() >= local_prev && zlecenie.getCylinder() <= curr);});
+    	v.erase(remove3, v.end());
+    	local_prev = curr;
 	}
-
-	if (furthest == 0) return prev;
-
-	auto remove2 = remove_if(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
-		return (zlecenie.getCylinder() >= prev && zlecenie.getCylinder() < curr);
-	});
-	v.erase(remove2, v.end());
-	return curr;
+	return local_prev;
 }
 
 bool Fd_scan::hasRT(std::vector<Zlecenie>& v)

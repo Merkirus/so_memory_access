@@ -48,7 +48,7 @@ int Zlecenie::getDeadline() const
 
 void Zlecenie::setDeadline(int deadline)
 {
-    this->deadline = deadline;
+    this->deadline -= deadline;
 }
 
 int Zlecenie::getOczekiwanie() const

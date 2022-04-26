@@ -40,6 +40,8 @@ void Sstf::run()
 		});
 		for (int i=1; i <= droga; ++i)
 		{
+			for_each(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
+				zlecenie.setOczekiwanie(1);});
 			if (randnum(0,20) == 1)
 			{
 				Zlecenie nowe = Zlecenie::makeZlecenie();
@@ -62,8 +64,6 @@ void Sstf::run()
 					}
 				}
 			}
-			for_each(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
-				zlecenie.setOczekiwanie(1);});
 		}
 		result += droga;
 		auto remove = remove_if(v.begin(), v.end(),

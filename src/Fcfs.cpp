@@ -22,6 +22,8 @@ void Fcfs::run()
     int curr, prev;
     long result, canceled;
 
+    long oczekiwanie = 0;
+
     size = v.size();
     add_size = 0;
     result = 0;
@@ -42,39 +44,7 @@ void Fcfs::run()
             int droga = 0;
             if (rt_algo->hasRT(v))
             {
-                curr = rt_algo->run(v, prev, canceled);
-                droga = abs(curr-prev);
-                for (int i=1; i <= droga; ++i)
-                {
-                    if (randnum(0,50) == 1)
-                    {
-                        Zlecenie nowe = Zlecenie::makeZlecenie();
-                        v.push_back(nowe);
-                        ++add_size;
-                        if (nowe.getRealTime())
-                        {
-                            droga = i;
-                            result += droga;
-                            for_each(v.begin(), v.end()-1,
-                                [&](Zlecenie& zlecenie) {
-                                    zlecenie.setDeadline(zlecenie.getDeadline()-droga);
-                                });
-                            curr = prev < curr ? curr - droga : curr + droga;
-                            real_time_event = true;
-                            break;
-                        }
-                    }
-                }
-                if (real_time_event) continue;
-                result += droga;
-                auto remove = remove_if(v.begin(), v.end(),
-                        [&](Zlecenie& zlecenie) -> bool {
-                            return (zlecenie.getCylinder()==curr && zlecenie.getRealTime());
-                        });
-                v.erase(remove, v.end());
-                std::cout << "RT" << '\n';
-                for_each(v.begin(), v.end(), [&](Zlecenie& zlecenie) {std::cout << zlecenie.getCylinder() << ',';});
-                std::cout << '\n';
+                prev = rt_algo->run(v, prev, result, canceled, oczekiwanie, add_size);
             }
             else
             {
@@ -82,7 +52,11 @@ void Fcfs::run()
                 droga = abs(curr-prev);
                 for (int i=1; i <= droga; ++i)
                 {
-                    if (randnum(0,50) == 1)
+                    for_each(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
+                        zlecenie.setOczekiwanie(1);});
+                    for_each(v.begin(), v.end()-1, [&](Zlecenie& zlecenie) {
+                        zlecenie.setDeadline(1);});
+                    if (randnum(0,20) == 1)
                     {
                         Zlecenie nowe = Zlecenie::makeZlecenie();
                         v.push_back(nowe);
@@ -91,7 +65,7 @@ void Fcfs::run()
                         {
                             droga = i;
                             result += droga;
-                            curr = prev < curr ? curr - droga : curr + droga;
+                            curr = prev < curr ? prev + droga : prev - droga;
                             real_time_event = true;
                             break;
                         }
@@ -99,12 +73,13 @@ void Fcfs::run()
                 }
                 if (real_time_event) continue;
                 result += droga;
+                oczekiwanie += v.begin()->getOczekiwanie();
                 v.erase(v.begin());
-                std::cout << "Common" << '\n';
-                for_each(v.begin(), v.end(), [&](Zlecenie& zlecenie) {std::cout << zlecenie.getCylinder() << ',';});
-                std::cout << '\n';
             }
-        }  
+        }
+        std::cout << result << std::endl;
+        std::cout << "Średnie oczekiwanie " << oczekiwanie << std::endl;
+        std::cout << "Anulowane procesy " << canceled << std::endl;
     }
     else
     {
@@ -115,17 +90,21 @@ void Fcfs::run()
             int droga = abs(curr-prev);
             for (int i=1; i <= droga; ++i)
             {
+                for_each(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
+                        zlecenie.setOczekiwanie(1);});
                 if (randnum(0,20) == 1)
                 {
                     Zlecenie nowe = Zlecenie::makeZlecenie();
                     v.push_back(nowe);
                     ++add_size;
+                    
                 }
             }
             result += droga;
+            oczekiwanie += v.begin()->getOczekiwanie();
             v.erase(v.begin());
         }
+        std::cout << result << std::endl;
+        std::cout << "Średnie oczekiwanie " << oczekiwanie << std::endl;
     }
-    std::cout << result << std::endl;
-    std::cout << canceled << std::endl;
 }

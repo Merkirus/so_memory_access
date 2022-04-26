@@ -11,7 +11,7 @@ class Fd_scan : public IAlgo
 public:
 	Fd_scan();
 	virtual ~Fd_scan();
-	int run(std::vector<Zlecenie>& v, int prev, long& cancelled) override;
+	int run(std::vector<Zlecenie>& v, int prev, long& result, long& cancelled, long& oczekiwanie, int& add_size) override;
 	bool hasRT(std::vector<Zlecenie>& v) override;
 };
 
