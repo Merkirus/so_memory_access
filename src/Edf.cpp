@@ -58,10 +58,10 @@ int Edf::run(std::vector<Zlecenie>& v, int prev, long& result, long& cancelled, 
 			droga  = curr_deadline;
 		    local_prev = local_prev < curr ? local_prev + droga : local_prev - droga;
 		}
-		droga = abs(curr - local_prev);
+		
 		for (int i=1; i <= droga; ++i)
         {
-            for_each(v.begin(), v.end()-1, [&](Zlecenie& zlecenie) {
+            for_each(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
                 zlecenie.setDeadline(1);});
             for_each(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
                 zlecenie.setOczekiwanie(1);});
