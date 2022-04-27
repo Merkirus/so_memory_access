@@ -28,6 +28,26 @@ int Fd_scan::run(std::vector<Zlecenie>& v, int prev, long& result, long& cancell
 
 		int furthest = 0;
 
+		/* Usuwanie wszystkich nie możliwych do realizacji zleceń */
+		auto remove5 = remove_if(v.begin(), v.end(),
+	            [&](Zlecenie& zlecenie) -> bool {
+	            	int odleglosc = zlecenie.getCylinder() - local_prev;
+	            	if (zlecenie.getRealTime())
+	            	{
+		            	if (zlecenie.getDeadline() <= abs(odleglosc))
+		            	{
+		            		++cancelled;
+		            		return true;
+		            	}
+		                return false;
+	            	}
+	            	return false;
+	            });
+	    v.erase(remove5, v.end());
+		/* --- */
+
+		/* Znalezienie kolejnego najdalszego realtime,
+		który jest możliwy do zrealizowania */
 		for (Zlecenie element : v)
 		{
 			if (element.getRealTime())
@@ -40,7 +60,8 @@ int Fd_scan::run(std::vector<Zlecenie>& v, int prev, long& result, long& cancell
 				}
 			}
 		}
-
+		/* --- */
+		
 		bool real_time_event = false;
 		int droga = abs(curr - local_prev);
 

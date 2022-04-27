@@ -81,6 +81,6 @@ void Scan::run()
 		else to_right = (to_right==true) ? false : true;
 	}
 
-	std::cout << result << std::endl;
+	std::cout << "Łączna liczba przewiniętych cylindrów " << result << std::endl;
 	std::cout << "Średnie oczekiwanie " << oczekiwanie/(size+add_size) << std::endl;
 }

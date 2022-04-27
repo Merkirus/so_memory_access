@@ -32,18 +32,27 @@ auto main() -> int {
 	
 	Fcfs fcfs{v, *algorytmy.at(0)};
 	Fcfs fcfs2{v, *algorytmy.at(1)};
+	Fcfs fcfs3{v};
 	Sstf sstf{v};
 	Scan scan{v};
 	Cscan cscan{v};
 
+	cout << "FCFS z EDF" << '\n';
 	fcfs.run();
 	cout << "====" << '\n';
+	cout << "FCFS Z FD-SCAN" << '\n';
 	fcfs2.run();
 	cout << "====" << '\n';
+	cout << "FCFS" << '\n';
+	fcfs3.run();
+	cout << "====" << '\n';
+	cout << "SSTF" << '\n';
 	sstf.run();
 	cout << "====" << '\n';
+	cout << "SCAN" << '\n';
 	scan.run();
 	cout << "====" << '\n';
+	cout << "C-SCAN" << '\n';
 	cscan.run();
 	return 0;
 }

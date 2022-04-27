@@ -73,6 +73,6 @@ void Sstf::run()
 		oczekiwanie += remove->getOczekiwanie();
         v.erase(remove, v.end());
 	}
-	std::cout << result << std::endl;
+	std::cout << "Łączna liczba przewiniętych cylindrów " << result << std::endl;
 	std::cout << "Średnie oczekiwanie " << oczekiwanie/(size+add_size) << std::endl;
 }

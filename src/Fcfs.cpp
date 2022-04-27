@@ -77,7 +77,7 @@ void Fcfs::run()
                 v.erase(v.begin());
             }
         }
-        std::cout << result << std::endl;
+        std::cout << "Łączna liczba przewiniętych cylindrów " << result << std::endl;
         std::cout << "Średnie oczekiwanie " << oczekiwanie << std::endl;
         std::cout << "Anulowane procesy " << canceled << std::endl;
     }
@@ -104,7 +104,7 @@ void Fcfs::run()
             oczekiwanie += v.begin()->getOczekiwanie();
             v.erase(v.begin());
         }
-        std::cout << result << std::endl;
+        std::cout << "Łączna liczba przewiniętych cylindrów " << result << std::endl;
         std::cout << "Średnie oczekiwanie " << oczekiwanie << std::endl;
     }
 }

@@ -74,7 +74,7 @@ void Cscan::run()
 		}
 	}
 
-	std::cout << result << std::endl;
+	std::cout << "Łączna liczba przewiniętych cylindrów " << result << std::endl;
 	std::cout << "Przesunięcia głowicy " << reset << std::endl;
 	std::cout << "Średnie oczekiwanie " << oczekiwanie/(size+add_size) << std::endl;
 }
