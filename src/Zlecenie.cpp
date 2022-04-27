@@ -7,6 +7,7 @@
 Zlecenie::Zlecenie(unsigned cylinder)
 {
     this->cylinder = cylinder;
+    used.push_back(cylinder);
     this->real_time = randnum(0,5) == 1 ? true : false;
     this->deadline = real_time ? randnum(1,100) : 0;
     this->oczekiwanie = 0;
