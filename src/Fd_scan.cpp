@@ -81,10 +81,21 @@ int Fd_scan::run(std::vector<Zlecenie>& v, int prev, long& result, long& cancell
 	                droga = i;
 	                result += droga;
 	                curr = prev < curr ? prev + droga : prev - droga;
-	                auto remove2 = remove_if(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
-						return (zlecenie.getCylinder() >= local_prev && zlecenie.getCylinder() <= curr);});
-	                local_prev = curr;
-	                v.erase(remove2, v.end());
+	                /* Usuwanie miniętych po drodze procesów */
+	                if (curr > local_prev)
+	                {
+		                auto remove2 = remove_if(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
+							return (zlecenie.getCylinder() >= local_prev && zlecenie.getCylinder() <= curr);});
+		                v.erase(remove2, v.end());
+	                }
+	                else
+	                {
+	                	auto remove2 = remove_if(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
+							return (zlecenie.getCylinder() <= local_prev && zlecenie.getCylinder() >= curr);});
+	                	v.erase(remove2, v.end());
+	                }
+	                /* --- */
+                	local_prev = curr;
 	                real_time_event = true;
 	                break;
 	            }
@@ -92,9 +103,20 @@ int Fd_scan::run(std::vector<Zlecenie>& v, int prev, long& result, long& cancell
 	    }
 	    if (real_time_event) continue;
 		result += droga;
-		auto remove3 = remove_if(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
-			return (zlecenie.getCylinder() >= local_prev && zlecenie.getCylinder() <= curr);});
-    	v.erase(remove3, v.end());
+		/* Usuwanie miniętych po drodze procesów */
+		if (curr > local_prev)
+        {
+            auto remove3 = remove_if(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
+				return (zlecenie.getCylinder() >= local_prev && zlecenie.getCylinder() <= curr);});
+            v.erase(remove3, v.end());
+        }
+        else
+        {
+        	auto remove3 = remove_if(v.begin(), v.end(), [&](Zlecenie& zlecenie) {
+				return (zlecenie.getCylinder() <= local_prev && zlecenie.getCylinder() >= curr);});
+        	v.erase(remove3, v.end());
+        }
+        /* --- */
     	local_prev = curr;
 	}
 	return local_prev;
